@@ -26,22 +26,46 @@ class ViewController: UIViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        let earth = SCNNode()
-        earth.geometry = SCNSphere(radius: 0.2)
-        earth.geometry?.firstMaterial?.diffuse.contents  = UIImage(named: "Earth")
-        earth.geometry?.firstMaterial?.specular.contents = UIImage(named: "Earth Specular")
-        earth.geometry?.firstMaterial?.emission.contents = UIImage(named: "Earth Clouds")
-        earth.geometry?.firstMaterial?.normal.contents   = UIImage(named: "Earth Normal")
-        earth.position = SCNVector3(0, 0, -1)
+        let sun = SCNNode(geometry: SCNSphere(radius: 0.35))
+        sun.geometry?.firstMaterial?.diffuse.contents  = UIImage(named: "Sun")
+        sun.position = SCNVector3(0, 0, -1)
         
-        sceneView.scene.rootNode.addChildNode(earth)
+        sceneView.scene.rootNode.addChildNode(sun)
         
-        let action = SCNAction.rotateBy(x: 0,
-                                        y: CGFloat(360.degreesToRadians),
-                                        z: 0,
-                                        duration: 8)
-        let forever = SCNAction.repeatForever(action)
-        earth.runAction(forever)
+        let earth = planet(geometry: SCNSphere(radius: 0.2),
+                           diffuse: UIImage(named: "Earth"),
+                           specular: UIImage(named: "Earth Specular"),
+                           emission: UIImage(named: "Earth Clouds"),
+                           normal: UIImage(named: "Earth Normal"),
+                           position: SCNVector3(1.2, 0, 0))
+
+        sun.addChildNode(earth)
+        
+        let venus = planet(geometry: SCNSphere(radius: 0.1),
+                          diffuse: UIImage(named: "Venus Surface"),
+                          specular: nil,
+                          emission: UIImage(named: "Venus Atmosphere"),
+                          normal: nil,
+                          position: SCNVector3(0.7, 0, 0))
+        sun.addChildNode(venus)
+    }
+    
+    func planet(geometry: SCNGeometry,
+                diffuse: UIImage?,
+                specular: UIImage?,
+                emission: UIImage?,
+                normal: UIImage?,
+                position: SCNVector3) -> SCNNode {
+        
+        let planet = SCNNode()
+        planet.geometry = geometry
+        planet.geometry?.firstMaterial?.diffuse.contents  = diffuse
+        planet.geometry?.firstMaterial?.specular.contents = specular
+        planet.geometry?.firstMaterial?.emission.contents = emission
+        planet.geometry?.firstMaterial?.normal.contents   = normal
+        planet.position = position
+        
+        return planet
     }
 }
 
